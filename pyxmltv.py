@@ -71,9 +71,8 @@ CATEGORIES_A_EVITER = ("série", "série d'animation", "journal", "magazine spor
 NAVIGATEUR = "firefox"
 
 # Date et heure locales actuelles :
-MAINTENANT = pytz.utc.localize(datetime.datetime.now())
-#print(MAINTENANT)
-# FIXME: Pourquoi on obtient +0000 au lieu de +02:00 ?
+PARIS = pytz.timezone('Europe/Paris')
+MAINTENANT = PARIS.localize(datetime.datetime.now())
 
 # Programmes des chaînes de la TNT gratuite, payante et des chaînes locales sur 12 jours :
 #telecharger_xmltv('http://kevinpato.free.fr/xmltv/download/tnt.zip')
