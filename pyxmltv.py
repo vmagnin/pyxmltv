@@ -14,6 +14,7 @@ https://github.com/vmagnin/pyxmltv.git
 import sys
 import zipfile
 import os
+import subprocess
 import datetime
 import time
 from urllib.request import urlretrieve
@@ -60,7 +61,7 @@ else:
 
 print(sys.argv)
 print(MOTS_CLES)
-#exit()
+
 
 CHAINE_RECUES = {'C1.telerama.fr': 'TF1', 'C2.telerama.fr': 'France 2', 'C3.telerama.fr': 'France 3', 'C112.telerama.fr': 'France 3 Nord Pas-de-Calais', 'C5.telerama.fr': 'France 5', 'C6.telerama.fr': 'M6', 'C7.telerama.fr': 'Arte', 'C8.telerama.fr': 'D8', 'C9.telerama.fr': 'W9', 'C10.telerama.fr': 'TMC', 'C11.telerama.fr': 'NT1', 'C12.telerama.fr': 'NRJ 12', 'C13.telerama.fr': 'France 4', 'C14.telerama.fr': 'La Chaîne Parlementaire', 'C15.telerama.fr': 'BFM TV', 'C17.telerama.fr': 'D17', 'C18.telerama.fr': 'Gulli', 'C119.telerama.fr': 'France Ô', 'C4131.telerama.fr': 'HD1', 'C4132.telerama.fr': "L'Equipe 21", 'C4133.telerama.fr': '6ter', 'C4134.telerama.fr': 'Numéro 23', 'C4135.telerama.fr': 'RMC Découverte', 'C4136.telerama.fr': 'Chérie 25', 'C133.telerama.fr': 'LCI - La Chaîne Info',  'C283.telerama.fr': 'LCM', 'C89.telerama.fr': 'Eurosport', 'C87.telerama.fr': 'Euronews', 'C131.telerama.fr': 'La Une', 'C130.telerama.fr': 'La Deux', 'C811.telerama.fr': 'la Trois'}
 
@@ -83,7 +84,6 @@ dict_chaines = {}
 for item in RACINE.findall('channel'):
     chaine = item.find('display-name').text
     dict_chaines.update({item.get('id'): chaine})
-#print(dict_chaines)
 
 dict_resultats = {}
 for programme in RACINE.findall('programme'):
@@ -161,4 +161,4 @@ for programme in RACINE.findall('programme'):
     dict_resultats.update({debut: emission})
 
 enregistrer_resultats(dict_resultats)
-os.system("firefox tnt.html &")
+subprocess.Popen(["firefox", "tnt.html"])

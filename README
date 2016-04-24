@@ -1,4 +1,4 @@
-pyxmltv v0.9
+pyxmltv v0.91
 
 Script Python3 permettant de surveiller un fichier au format XMLTV contenant les programmes de la TNT sur 12 jours.
 
@@ -10,7 +10,7 @@ Usage :
 - Exemple : ./pyxmltv.py "Linus Torvald" Stallman Linux
 - La casse des mots-clés est prise en compte.
 
-Système d'exploitation : ce script a été écrit sous Linux (Python 3.5.1) mais devrait fonctionner sous d'autres systèmes, à condition de modifier éventuellement la ligne os.system("firefox tnt.html &").
+Système d'exploitation : ce script a été écrit sous Linux (Python 3.5.1) mais devrait fonctionner sous d'autres systèmes.
 
 Le fichier XMLTV est récupéré à cette adresse :
 http://kevinpato.free.fr/xmltv/download/complet.zip
