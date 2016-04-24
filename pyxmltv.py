@@ -140,13 +140,14 @@ for programme in RACINE.findall('programme'):
             if element.tag == "title":
                 texte = "<h2>"+texte+"</h2>\n"
                 apres = " "
+            elif element.tag == "sub-title":
+                texte = "<h3>"+texte+"</h3>\n"
+                apres = " "
             elif element.tag == "desc":
                 apres = "<br /> \n"
                 compteur_a_la_ligne += 1
             else:
                 apres = " | "
-
-            # TODO: subtitle
 
             if (element.tag in ["date", "category"]) & (compteur_a_la_ligne == 1):
                 avant = "<br /> \n"
