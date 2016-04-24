@@ -21,8 +21,6 @@ from urllib.request import urlretrieve
 import xml.etree.ElementTree as ET
 import pytz
 
-# TODO: comment ne télécharger qu'une fois tous les 12 jours ?
-# TODO: ajouter des commentaires
 
 def telecharger_xmltv(URL_RSS):
     # Nombre de jours depuis l'epoch :
@@ -31,8 +29,8 @@ def telecharger_xmltv(URL_RSS):
     JOUR_FICHIER_AVANT = 0
     if os.access("complet.zip", os.F_OK):
         JOUR_FICHIER_AVANT = int(os.stat("complet.zip").st_mtime / 86400)
-    # On télécharge le zip et on extrait le fichier xml :
-    if JOUR_FICHIER_AVANT != AUJOURDHUI:
+    # On télécharge le zip une fois tous les 6 jours et on extrait le fichier xml :
+    if AUJOURDHUI - JOUR_FICHIER_AVANT >= 6:
         FICHIER = urlretrieve(URL_RSS, 'complet.zip')
         ZFILE = zipfile.ZipFile('complet.zip', 'r')
         ZFILE.extractall()
