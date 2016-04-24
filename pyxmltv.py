@@ -68,6 +68,8 @@ TAGS_A_EXPLORER = ("title", "sub-title", "desc", "director", "actor", "composer"
 
 CATEGORIES_A_EVITER = ("série", "série d'animation", "journal", "magazine sportif", "météo", "clips")
 
+NAVIGATEUR = "firefox"
+
 # Date et heure locales actuelles :
 MAINTENANT = pytz.utc.localize(datetime.datetime.now())
 #print(MAINTENANT)
@@ -167,4 +169,4 @@ for programme in RACINE.findall('programme'):
 
 # On enregistre et on affiche les résultats :
 enregistrer_resultats(dict_resultats)
-subprocess.Popen(["firefox", "tnt.html"])
+subprocess.Popen([NAVIGATEUR, "tnt.html"])
