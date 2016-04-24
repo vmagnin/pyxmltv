@@ -138,11 +138,6 @@ for programme in RACINE.findall('programme'):
         texte = str(element.text)
         # Attention, certains éléments peuvent être vides :
         if (texte[0] != "\n") & (texte != "None"):
-            # On met les mots-clés en gras :
-            for mot in MOTS_CLES:
-                if texte.find(mot) != -1:
-                    texte = texte.replace(mot, "<strong>"+mot+"</strong>")
-
             if element.tag == "title":
                 texte = "<h2>"+texte+"</h2>\n"
                 apres = " "
@@ -165,6 +160,11 @@ for programme in RACINE.findall('programme'):
             emission = emission + avant + texte + apres
 
     emission = "<hr /> \n" + emission
+    # On met les mots-clés en gras :
+    for mot in MOTS_CLES:
+        if emission.find(mot) != -1:
+            emission = emission.replace(mot, "<strong>"+mot+"</strong>")
+            
     dict_resultats.update({debut: emission})
 
 # On enregistre et on affiche les résultats :
