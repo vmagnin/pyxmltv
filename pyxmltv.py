@@ -27,11 +27,11 @@ import pytz
 def telecharger_xmltv(URL_RSS):
     # Nombre de jours depuis l'epoch :
     AUJOURDHUI = int(time.time() / 86400)
-
+    # Date du fichier zip dans le répertoire, s'il est déjà présent :
     JOUR_FICHIER_AVANT = 0
     if os.access("complet.zip", os.F_OK):
         JOUR_FICHIER_AVANT = int(os.stat("complet.zip").st_mtime / 86400)
-
+    # On télécharge le zip et on extrait le fichier xml :
     if JOUR_FICHIER_AVANT != AUJOURDHUI:
         FICHIER = urlretrieve(URL_RSS, 'complet.zip')
         ZFILE = zipfile.ZipFile('complet.zip', 'r')
@@ -40,20 +40,21 @@ def telecharger_xmltv(URL_RSS):
 
 
 def enregistrer_resultats(dict_resultats):
-    # On enregistre les résultats dans un fichier HTML et on l'ouvre dans Firefox :
+    # On enregistre les résultats dans un fichier HTML :
     resultats = open("tnt.html", "w")
     resultats.write('<!DOCTYPE html> \n <html> \n <head> <meta charset="UTF-8" /> </head> \n')
     resultats.write('<body> <a href="http://television.telerama.fr/tele/grille.php">http://television.telerama.fr/tele/grille.php</a> <br /> <br /> \n')
-    # Afficher les résultats par ordre chronologique :
+    # Ecrire les résultats par ordre chronologique (clef) :
     for clef in sorted(dict_resultats):
         resultats.write(dict_resultats[clef])
-
+    # Fin du fichier :
     resultats.write("</body> \n </html> \n")
     resultats.close()
 
-
 #****************************************************************    
-    
+# Programme principal
+#****************************************************************    
+
 if len(sys.argv) == 1:
     MOTS_CLES = ("Jude Law", "Star Wars", "La guerre des étoiles", "film d'animation", "téléfilm d'animation", "concert", "Led Zeppelin", "Arvo Pärt", "Bowie", "Björk", "écologie", "Anne Closset", "Yann Arthus-Bertrand", "nucléaire", "film de science-fiction", " astronomie", "chercheur", "brevets", "Snowden", "Linux", "Linus Torvald", "Stallman")
 else:
@@ -71,11 +72,15 @@ CATEGORIES_A_EVITER = ("série", "série d'animation", "journal", "magazine spor
 
 # Date et heure locales actuelles :
 MAINTENANT = pytz.utc.localize(datetime.datetime.now())
-# FIXME: Pourquoi on n'a pas +02:00 ????
 #print(MAINTENANT)
+# FIXME: Pourquoi on obtient +0000 au lieu de +02:00 ?
 
-# 'http://kevinpato.free.fr/xmltv/download/tnt.zip'
+# Programmes des chaînes de la TNT gratuite, payante et des chaînes locales sur 12 jours :
+#telecharger_xmltv('http://kevinpato.free.fr/xmltv/download/tnt.zip')
+# Programme de plus de 190 chaînes sur 12 jours :
 telecharger_xmltv('http://kevinpato.free.fr/xmltv/download/complet.zip')
+
+# On crée l'arbre XML (ElementTree) :
 ARBRE = ET.parse('complet.xml')
 RACINE = ARBRE.getroot()
 
@@ -85,9 +90,10 @@ for item in RACINE.findall('channel'):
     chaine = item.find('display-name').text
     dict_chaines.update({item.get('id'): chaine})
 
+# On parcourt l'ensemble des programmes TV :
 dict_resultats = {}
 for programme in RACINE.findall('programme'):
-    # Est-ce qu'on reçoit cette chaîne ?
+    # Est-ce qu'on reçoit cette chaîne ? Sinon on passe au programme suivant...
     if programme.get('channel') not in CHAINE_RECUES:
         continue
 
@@ -120,16 +126,17 @@ for programme in RACINE.findall('programme'):
     if date_fin < MAINTENANT:
         continue
 
-    # Troisième passe : mise en forme pour affichage de ce programme
+    # Troisième passe : mise en forme pour affichage de cette émission
     chaine = CHAINE_RECUES[programme.attrib['channel']]
     debut = programme.attrib['start']
     date_debut = datetime.datetime.strptime(debut, "%Y%m%d%H%M%S %z")
     emission = date_debut.strftime("%A %d/%m/%Y de %H:%M à ") + date_fin.strftime("%H:%M") + " sur <em>" + chaine + "</em> <br /> \n"
     compteur_a_la_ligne = 0
 
+    # On passe en revue les sous-éléments et on formatte le résultat :
     for element in programme.iter():
         texte = str(element.text)
-        # On améliore la mise en page :
+        # Attention, certains éléments peuvent être vides :
         if (texte[0] != "\n") & (texte != "None"):
             # On met les mots-clés en gras :
             for mot in MOTS_CLES:
@@ -160,5 +167,6 @@ for programme in RACINE.findall('programme'):
     emission = "<hr /> \n" + emission
     dict_resultats.update({debut: emission})
 
+# On enregistre et on affiche les résultats :
 enregistrer_resultats(dict_resultats)
 subprocess.Popen(["firefox", "tnt.html"])
