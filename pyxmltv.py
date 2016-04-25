@@ -2,13 +2,12 @@
 # -*- coding: utf-8 -*-
 
 '''
-Surveillance d'un flux RSS contenant les programmes de la TNT sur 12 jours. 
-./pyxmltv.py [mot1] [mot2] [mot3]...
+Surveillance d'un fichier XMLTV contenant les programmes de la TNT pour les douze prochains jours. 
+./pyxmltv.py -m mot1 mot2 mot3...
 Si aucun mot clé n'est fourni, la liste interne au script est utilisée.
 Pour chercher une expression, la mettre entre guillemets.
-Exemple : ./pyxmltv.py "Linus Torvald" Stallman Linux
+Exemple : ./pyxmltv.py -m "Linus Torvald" Stallman Linux
 La casse est prise en compte.
-https://github.com/vmagnin/pyxmltv.git
 '''
 
 import sys
@@ -20,6 +19,7 @@ import time
 from urllib.request import urlretrieve
 import xml.etree.ElementTree as ET
 import pytz
+import argparse
 
 
 def telecharger_xmltv(URL_RSS):
@@ -55,13 +55,19 @@ def enregistrer_resultats(dict_resultats):
 #****************************************************************    
 NAVIGATEUR = "firefox"
 
+# Options de la ligne de commandes :
+parsarg = argparse.ArgumentParser(description="Surveillance d'un fichier XMLTV contenant les programmes de la TNT pour les douze prochains jours", epilog="Sources : <https://github.com/vmagnin/pyxmltv>")
+parsarg.add_argument("-m", action="store", nargs="+", help="Liste de mots-clés ou d'expressions (entre guillemets)", metavar="mot")
+parsarg.add_argument("-q", action="store_true", help="Pas d'affichage (quiet)")
+parsarg.add_argument("-p", action="store_true", help="Affichage uniquement en ligne de commandes (print)")
+parsarg.add_argument("-v", action="version", version="%(prog)s v0.93 Licence GPLv3", help="Version")
+args = parsarg.parse_args()
+
 # S'il n'y a pas de mots-clés en arguments, on utilise la liste (tuple) suivante par défaut :
 if len(sys.argv) == 1:
     MOTS_CLES = ("Jude Law", "Star Wars", "La guerre des étoiles", "film d'animation", "téléfilm d'animation", "concert", "Led Zeppelin", "Arvo Pärt", "Bowie", "Björk", "écologie", "Anne Closset", "Yann Arthus-Bertrand", "nucléaire", "film de science-fiction", " astronomie", "chercheur", "brevets", "Snowden", "Linux", "Linus Torvald", "Stallman")
 else:
-    MOTS_CLES = sys.argv[1:]
-#print(sys.argv)
-#print(MOTS_CLES)
+    MOTS_CLES = args.m
 
 TAGS_A_EXPLORER = ("title", "sub-title", "desc", "director", "actor", "composer", "date", "category")
 
@@ -71,7 +77,7 @@ CHAINE_RECUES = {'C1.telerama.fr': 'TF1', 'C2.telerama.fr': 'France 2', 'C3.tele
 
 # Programmes des chaînes de la TNT gratuite, payante et des chaînes locales sur 12 jours :
 #telecharger_xmltv('http://kevinpato.free.fr/xmltv/download/tnt.zip')
-# Programme de plus de 190 chaînes sur 12 jours :
+# Programme de plus de 190 chaînes sur les 12 prochains jours :
 telecharger_xmltv('http://kevinpato.free.fr/xmltv/download/complet.zip')
 
 # On crée l'arbre XML (ElementTree) :
@@ -156,7 +162,7 @@ for programme in RACINE.findall('programme'):
             emission = emission + avant + texte + apres
 
     # On ajoute un séparateur (barre horizontale) entre chaque programme :
-    emission = "<hr /> \n" + emission
+    emission = "\n <hr /> \n" + emission
     # On met les mots-clés en gras :
     for mot in MOTS_CLES:
         emission = emission.replace(mot, "<strong>"+mot+"</strong>")
@@ -166,4 +172,10 @@ for programme in RACINE.findall('programme'):
 
 # On enregistre et on affiche les résultats :
 enregistrer_resultats(dict_resultats)
-subprocess.Popen([NAVIGATEUR, "tnt.html"])
+
+if not args.q:
+    if args.p:
+        for clef in sorted(dict_resultats):
+            print(dict_resultats[clef])
+    else:
+        subprocess.Popen([NAVIGATEUR, "tnt.html"])

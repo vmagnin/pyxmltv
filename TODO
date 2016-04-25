@@ -1,5 +1,6 @@
 Quelques idées d'améliorations :
 
+- Récupérer l'ETag contenu dans l'en-tête obtenu avec urlopen("http://kevinpato.free.fr/xmltv/download/complet.zip").info() pour savoir si le fichier zip a changé, ce qui implique un mécanisme pour sauvegarder l'ETag.
 - Améliorer la ligne de commandes : 
     - Aide
     - Possibilité d'utiliser un fichier contenant des mots-clés
