@@ -163,8 +163,7 @@ for programme in RACINE.findall('programme'):
     emission = "<hr /> \n" + emission
     # On met les mots-clés en gras :
     for mot in MOTS_CLES:
-        if emission.find(mot) != -1:
-            emission = emission.replace(mot, "<strong>"+mot+"</strong>")
+        emission = emission.replace(mot, "<strong>"+mot+"</strong>")
             
     # La clé "debut" servira au classement chronologique des résultats :
     dict_resultats.update({debut: emission})
