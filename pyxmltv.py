@@ -123,18 +123,17 @@ for programme in RACINE.findall('programme'):
 
     # Passer au programme suivant s'il est fini :
     fin = programme.attrib['stop']
-    date_fin = datetime.datetime.strptime(fin, "%Y%m%d%H%M%S %z")
-    if date_fin < MAINTENANT:
+    date_heure_fin = datetime.datetime.strptime(fin, "%Y%m%d%H%M%S %z")
+    if date_heure_fin < MAINTENANT:
         continue
 
     # Troisième passe : mise en forme pour affichage de cette émission
     chaine = CHAINE_RECUES[programme.attrib['channel']]
     debut = programme.attrib['start']
-    date_debut = datetime.datetime.strptime(debut, "%Y%m%d%H%M%S %z")
-    emission = date_debut.strftime("%A %d/%m/%Y de %H:%M à ") + date_fin.strftime("%H:%M") + " sur <em>" + chaine + "</em> <br /> \n"
-    compteur_a_la_ligne = 0
-
+    date_heure_debut = datetime.datetime.strptime(debut, "%Y%m%d%H%M%S %z")
+    emission = date_heure_debut.strftime("%A %d/%m/%Y de %H:%M à ") + date_heure_fin.strftime("%H:%M") + " sur <em>" + chaine + "</em> <br /> \n"
     # On passe en revue les sous-éléments et on formatte le résultat :
+    passages_a_la_ligne = 0
     for element in programme.iter():
         texte = str(element.text)
         # Attention, certains éléments peuvent être vides :
@@ -147,13 +146,13 @@ for programme in RACINE.findall('programme'):
                 apres = " "
             elif element.tag == "desc":
                 apres = "<br /> \n"
-                compteur_a_la_ligne += 1
+                passages_a_la_ligne += 1
             else:
                 apres = " | "
 
-            if (element.tag in ["date", "category"]) & (compteur_a_la_ligne == 1):
+            if (element.tag in ["date", "category"]) & (passages_a_la_ligne == 1):
                 avant = "<br /> \n"
-                compteur_a_la_ligne += 1
+                passages_a_la_ligne += 1
             else:
                 avant = ""
 
