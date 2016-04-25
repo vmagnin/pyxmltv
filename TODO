@@ -1,0 +1,7 @@
+Quelques idées d'améliorations :
+
+- Déterminer la date du fichier zip sur le serveur pour savoir s'il faut le télécharger à nouveau
+- Améliorer la ligne de commandes : 
+    - Aide
+    - Possibilité d'utiliser un fichier contenant des mots-clés
+- Gestion des erreurs (téléchargement du zip)
