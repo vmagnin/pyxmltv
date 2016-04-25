@@ -38,9 +38,10 @@ def telecharger_xmltv(URL_RSS):
 
 
 def enregistrer_resultats(dict_resultats):
-    # On enregistre les résultats dans un fichier HTML :
+    # On enregistre les résultats dans un fichier HTML5 :
     resultats = open("tnt.html", "w")
     resultats.write('<!DOCTYPE html> \n <html> \n <head> <meta charset="UTF-8" /> </head> \n')
+    # On met un lien vers un programme TV, ça peut servir :
     resultats.write('<body> <a href="http://television.telerama.fr/tele/grille.php">http://television.telerama.fr/tele/grille.php</a> <br /> <br /> \n')
     # Ecrire les résultats par ordre chronologique (clef) :
     for clef in sorted(dict_resultats):
@@ -53,7 +54,7 @@ def enregistrer_resultats(dict_resultats):
 # Programme principal
 #****************************************************************    
 
-# S'il n'y a pas de mots-clés en arguments, on utilise la liste suivante par défaut :
+# S'il n'y a pas de mots-clés en arguments, on utilise la liste (tuple) suivante par défaut :
 if len(sys.argv) == 1:
     MOTS_CLES = ("Jude Law", "Star Wars", "La guerre des étoiles", "film d'animation", "téléfilm d'animation", "concert", "Led Zeppelin", "Arvo Pärt", "Bowie", "Björk", "écologie", "Anne Closset", "Yann Arthus-Bertrand", "nucléaire", "film de science-fiction", " astronomie", "chercheur", "brevets", "Snowden", "Linux", "Linus Torvald", "Stallman")
 else:
@@ -158,12 +159,14 @@ for programme in RACINE.findall('programme'):
 
             emission = emission + avant + texte + apres
 
+    # On ajoute un séparateur (barre horizontale) entre chaque programme :
     emission = "<hr /> \n" + emission
     # On met les mots-clés en gras :
     for mot in MOTS_CLES:
         if emission.find(mot) != -1:
             emission = emission.replace(mot, "<strong>"+mot+"</strong>")
             
+    # La clé "debut" servira au classement chronologique des résultats :
     dict_resultats.update({debut: emission})
 
 # On enregistre et on affiche les résultats :
