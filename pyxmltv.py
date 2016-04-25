@@ -29,8 +29,8 @@ def telecharger_xmltv(URL_RSS):
     JOUR_FICHIER_AVANT = 0
     if os.access("complet.zip", os.F_OK):
         JOUR_FICHIER_AVANT = int(os.stat("complet.zip").st_mtime / 86400)
-    # On télécharge le zip une fois tous les 6 jours et on extrait le fichier xml :
-    if AUJOURDHUI - JOUR_FICHIER_AVANT >= 6:
+    # On retélécharge le zip s'il date de plus d'un jour et on extrait le fichier xml :
+    if AUJOURDHUI - JOUR_FICHIER_AVANT >= 1:
         FICHIER = urlretrieve(URL_RSS, 'complet.zip')
         ZFILE = zipfile.ZipFile('complet.zip', 'r')
         ZFILE.extractall()
