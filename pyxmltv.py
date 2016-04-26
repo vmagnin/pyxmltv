@@ -31,7 +31,13 @@ def telecharger_xmltv(URL_RSS):
         JOUR_FICHIER_AVANT = int(os.stat("complet.zip").st_mtime / 86400)
     # On retélécharge le zip s'il date de plus d'un jour et on extrait le fichier xml :
     if AUJOURDHUI - JOUR_FICHIER_AVANT >= 1:
-        FICHIER = urlretrieve(URL_RSS, 'complet.zip')
+        try:
+            FICHIER = urlretrieve(URL_RSS, 'complet.zip')
+        except:
+            print("Attention ! Téléchargement impossible")
+            if not os.access("complet.zip", os.F_OK):
+                exit(2)
+            
         ZFILE = zipfile.ZipFile('complet.zip', 'r')
         ZFILE.extractall()
         ZFILE.close()
