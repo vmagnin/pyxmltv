@@ -1,4 +1,3 @@
 Quelques idées d'améliorations :
 
-- Récupérer l'ETag contenu dans l'en-tête obtenu avec urlopen("http://kevinpato.free.fr/xmltv/download/complet.zip").info() pour savoir si le fichier zip a changé, ce qui implique un mécanisme pour sauvegarder l'ETag.
-- Gestion des erreurs (téléchargement du zip)
+- Récupérer l'ETag contenu dans l'en-tête obtenu avec urlopen("http://kevinpato.free.fr/xmltv/download/complet.zip").info() pour savoir si le fichier zip a changé, ce qui implique un mécanisme pour sauvegarder l'ETag (utiliser le module pickle).

@@ -186,7 +186,9 @@ for programme in RACINE.findall('programme'):
     # On met les mots-clés en gras :
     for mot in MOTS_CLES:
         emission = emission.replace(mot, "<strong>"+mot+"</strong>")
-            
+    # On traduit le caractère & de l'HTML :
+    emission = emission.replace("%26", "&")
+    
     # La clé "debut" servira au classement chronologique des résultats :
     dict_resultats.update({debut: emission})
 
