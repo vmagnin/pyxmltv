@@ -20,7 +20,7 @@ from urllib.request import urlretrieve
 import xml.etree.ElementTree as ET
 import pytz
 import argparse
-
+import importlib
 
 def telecharger_xmltv(URL_RSS):
     # Nombre de jours depuis l'epoch :
@@ -58,21 +58,34 @@ NAVIGATEUR = "firefox"
 # Options de la ligne de commandes :
 parsarg = argparse.ArgumentParser(description="Surveillance d'un fichier XMLTV contenant les programmes de la TNT pour les douze prochains jours", epilog="Sources : <https://github.com/vmagnin/pyxmltv>")
 parsarg.add_argument("-m", action="store", nargs="+", help="Liste de mots-clés ou d'expressions (entre guillemets)", metavar="mot")
+parsarg.add_argument("-f", action="store", nargs=1, help="Fichier .py de mots-clés", metavar="fichier")
 parsarg.add_argument("-q", action="store_true", help="Pas d'affichage (quiet)")
 parsarg.add_argument("-p", action="store_true", help="Affichage uniquement en ligne de commandes (print)")
 parsarg.add_argument("-v", action="version", version="%(prog)s v0.94 Licence GPLv3", help="Version")
 args = parsarg.parse_args()
 
-# Si un fichier persoxmltv.py existe, on utilise ses définitions sinon on utilise ces listes par défaut :
-try:
-    from persoxmltv import *
-except:
-    MOTS_CLES = ("Jude Law", "Star Wars", "La guerre des étoiles", "film d'animation", "téléfilm d'animation", "concert", "Led Zeppelin", "Arvo Pärt", "Bowie", "Björk", "écologie", "Anne Closset", "Yann Arthus-Bertrand", "nucléaire", "film de science-fiction", " astronomie", "chercheur", "brevets", "Snowden", "Linux", "Linus Torvald", "Stallman")
-    TAGS_A_EXPLORER = ("title", "sub-title", "desc", "director", "actor", "composer", "date", "category")
-    CATEGORIES_A_EVITER = ("série", "série d'animation", "journal", "magazine sportif", "météo", "clips", "téléréalité")
-    CHAINE_RECUES = {'C1.telerama.fr': 'TF1', 'C2.telerama.fr': 'France 2', 'C3.telerama.fr': 'France 3', 'C112.telerama.fr': 'France 3 Nord Pas-de-Calais', 'C5.telerama.fr': 'France 5', 'C6.telerama.fr': 'M6', 'C7.telerama.fr': 'Arte', 'C8.telerama.fr': 'D8', 'C9.telerama.fr': 'W9', 'C10.telerama.fr': 'TMC', 'C11.telerama.fr': 'NT1', 'C12.telerama.fr': 'NRJ 12', 'C13.telerama.fr': 'France 4', 'C14.telerama.fr': 'La Chaîne Parlementaire', 'C15.telerama.fr': 'BFM TV', 'C16.telerama.fr': 'iTélé', 'C17.telerama.fr': 'D17', 'C18.telerama.fr': 'Gulli', 'C119.telerama.fr': 'France Ô', 'C4131.telerama.fr': 'HD1', 'C4132.telerama.fr': "L'Equipe 21", 'C4133.telerama.fr': '6ter', 'C4134.telerama.fr': 'Numéro 23', 'C4135.telerama.fr': 'RMC Découverte', 'C4136.telerama.fr': 'Chérie 25', 'C133.telerama.fr': 'LCI - La Chaîne Info', 'C87.telerama.fr': 'Euronews', 'C131.telerama.fr': 'La Une', 'C130.telerama.fr': 'La Deux', 'C811.telerama.fr': 'la Trois'}
+# Si un fichier de mots-clés est spécifié, on l'utilise. Sinon si un fichier persoxmltv.py existe on l'utilise, sinon on utilise des listes par défaut :
+if args.f is not None:
+    try:
+        modu = importlib.import_module(args.f[0])
+    except:
+        print("Erreur : fichier de mots-clés introuvable")
+        exit(1)
+        
+    MOTS_CLES = modu.MOTS_CLES
+    TAGS_A_EXPLORER = modu.TAGS_A_EXPLORER
+    CATEGORIES_A_EVITER = modu.CATEGORIES_A_EVITER
+    CHAINE_RECUES = modu.CHAINE_RECUES
+else:
+    try:
+        from perso_xmltv import *
+    except:
+        MOTS_CLES = ("Jude Law", "Star Wars", "La guerre des étoiles", "film d'animation", "téléfilm d'animation", "concert", "Led Zeppelin", "Arvo Pärt", "Bowie", "Björk", "écologie", "Anne Closset", "Yann Arthus-Bertrand", "nucléaire", "film de science-fiction", " astronomie", "chercheur", "brevets", "Snowden", "Linux", "Linus Torvald", "Stallman")
+        TAGS_A_EXPLORER = ("title", "sub-title", "desc", "director", "actor", "composer", "date", "category")
+        CATEGORIES_A_EVITER = ("série", "série d'animation", "journal", "magazine sportif", "météo", "clips", "téléréalité")
+        CHAINE_RECUES = {'C1.telerama.fr': 'TF1', 'C2.telerama.fr': 'France 2', 'C3.telerama.fr': 'France 3', 'C112.telerama.fr': 'France 3 Nord Pas-de-Calais', 'C5.telerama.fr': 'France 5', 'C6.telerama.fr': 'M6', 'C7.telerama.fr': 'Arte', 'C8.telerama.fr': 'D8', 'C9.telerama.fr': 'W9', 'C10.telerama.fr': 'TMC', 'C11.telerama.fr': 'NT1', 'C12.telerama.fr': 'NRJ 12', 'C13.telerama.fr': 'France 4', 'C14.telerama.fr': 'La Chaîne Parlementaire', 'C15.telerama.fr': 'BFM TV', 'C16.telerama.fr': 'iTélé', 'C17.telerama.fr': 'D17', 'C18.telerama.fr': 'Gulli', 'C119.telerama.fr': 'France Ô', 'C4131.telerama.fr': 'HD1', 'C4132.telerama.fr': "L'Equipe 21", 'C4133.telerama.fr': '6ter', 'C4134.telerama.fr': 'Numéro 23', 'C4135.telerama.fr': 'RMC Découverte', 'C4136.telerama.fr': 'Chérie 25', 'C133.telerama.fr': 'LCI - La Chaîne Info', 'C87.telerama.fr': 'Euronews', 'C131.telerama.fr': 'La Une', 'C130.telerama.fr': 'La Deux', 'C811.telerama.fr': 'la Trois'}
 
-# Mais s'il y a des mots-clés en arguments, c'est eux qu'on utilise :
+# Sans tous les cas, s'il y a des mots-clés en arguments, c'est eux qu'on utilise :
 if args.m is not None:
     MOTS_CLES = args.m    
 
