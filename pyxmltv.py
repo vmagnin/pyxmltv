@@ -16,25 +16,36 @@ import zipfile
 import os
 import subprocess
 import datetime
-import time
-from urllib.request import urlretrieve
+from urllib.request import urlretrieve, urlopen
 import xml.etree.ElementTree as ET
 import argparse
 import importlib
+import re
+import pickle
 import pytz
+
 
 def telecharger_xmltv(url_rss):
     """
-    Télécharge si nécessaire la nouvelle version du fichier situé à url_rss
+    Télécharge le fichier situé à url_rss si une nouvelle version est disponible
     """
-    # Nombre de jours depuis l'epoch :
-    aujourdhui = int(time.time() / 86400)
-    # Date du fichier zip dans le répertoire, s'il est déjà présent :
-    jour_fichier_avant = 0
-    if os.access("complet.zip", os.F_OK):
-        jour_fichier_avant = int(os.stat("complet.zip").st_mtime / 86400)
-    # On retélécharge le zip s'il date de plus d'un jour et on extrait le fichier xml :
-    if aujourdhui - jour_fichier_avant >= 1:
+    # On récupère l'ETag du fichier présent dans le répertoire du script :
+    try:
+        with open("ETag_xmltv.pickle", 'rb') as FICHIER_ETag:
+            ANCIEN_ETag = pickle.load(FICHIER_ETag)
+    except:
+        ANCIEN_ETag = ""
+
+    # On récupère l'ETag du zip sur le serveur :
+    try:
+        entete = urlopen("http://kevinpato.free.fr/xmltv/download/complet.zip").info()
+        match = re.search(r'ETag: "(\w+-\w+-\w+)"', str(entete))
+        ETag = match.group(1)
+    except:
+        ETag = ""
+
+    # On retélécharge le zip s'il a été modifié sur le serveur:
+    if ETag != ANCIEN_ETag:
         try:
             urlretrieve(url_rss, 'complet.zip')
         except:
@@ -45,6 +56,10 @@ def telecharger_xmltv(url_rss):
         zfile = zipfile.ZipFile('complet.zip', 'r')
         zfile.extractall()
         zfile.close()
+
+        # On sauvegarde l'ETag du fichier zip :
+        with open("ETag_xmltv.pickle", 'wb') as FICHIER_ETag:
+            pickle.dump(ETag, FICHIER_ETag)
 
 
 def enregistrer_resultats(dico_resultats):
@@ -79,7 +94,7 @@ PARSARG.add_argument("-q", action="store_true",
 PARSARG.add_argument("-p", action="store_true",
                      help="Affichage uniquement en ligne de commandes (print)")
 PARSARG.add_argument("-v", action="version",
-                     version="%(prog)s v0.94 Licence GPLv3", help="Version")
+                     version="%(prog)s v0.96 Licence GPLv3", help="Version")
 ARGS = PARSARG.parse_args()
 
 # Si un fichier de mots-clés est spécifié, on l'utilise. Sinon si un fichier

@@ -1,22 +1,37 @@
-pyxmltv v0.95
+pyxmltv v0.96
 
 Script Python3 permettant de surveiller un fichier au format XMLTV contenant les programmes de la TNT pour les douze prochains jours.
 
-Usage : ./pyxmltv.py -m mot1 mot2 mot3...
+usage: pyxmltv.py [-h] [-m mot [mot ...]] [-f fichier] [-q] [-p] [-v]                       
 
-- Si aucun mot clé n'est fourni, la liste interne au script est utilisée ou celle définie dans perso_xmltv.py si ce fichier existe, ou un autre fichier si on utilise l'option -f.
-- Pour chercher une expression, la mettre entre guillemets.
-- Exemple : ./pyxmltv.py -m "Linus Torvald" Stallman Linux
-- La casse des mots-clés est prise en compte.
-- Pour connaître toutes les options : ./pyxmltv -h
+optional arguments:
+  -h, --help        show this help message and exit
+  -m mot [mot ...]  Liste de mots-clés ou d'expressions (entre guillemets)
+  -f fichier        Fichier .py de mots-clés
+  -q                Pas d'affichage (quiet)
+  -p                Affichage uniquement en ligne de commandes (print)
+  -v                Version
 
-Le fichier perso_xmltv.py contiendra vos propres listes et dictionnaires : MOTS_CLES, TAGS_A_EXPLORER, CATEGORIES_A_EVITER, CHAINE_RECUES. Il ne sera pas inclus dans le dépôt GitHub. Vous pourrez utiliser d'autres fichiers sur le même modèle avec l'option -f.
+* Pour chercher une expression, la mettre entre guillemets.
+    * Exemple : ./pyxmltv.py -m "Linus Torvald" Stallman Linux
+* La casse des mots-clés est prise en compte.
+* Si aucun mot clé n'est fourni, la liste interne au script est utilisée ou celle définie dans perso_xmltv.py si ce fichier existe, ou un autre fichier si on utilise l'option -f.
 
-Système d'exploitation : ce script a été écrit sous Linux (Python 3.5.1) mais devrait fonctionner sous d'autres systèmes.
+Le fichier perso_xmltv.py contiendra vos propres listes et dictionnaires :
+    #!/usr/bin/env python3
+    # -*- coding: utf-8 -*-
+    MOTS_CLES = ("film d'animation", "Linus Torvald", "Stallman")
+    TAGS_A_EXPLORER = ("title", "category")
+    CATEGORIES_A_EVITER = ("série", "téléréalité")
+    CHAINE_RECUES = {'C1.telerama.fr': 'TF1', 'C2.telerama.fr': 'France 2'}
+Il ne sera pas inclus dans le dépôt GitHub. Vous pourrez utiliser d'autres fichiers sur le même modèle avec l'option -f.
 
 Le fichier XMLTV est récupéré à cette adresse :
 http://kevinpato.free.fr/xmltv/download/complet.zip
+Le téléchargement de l'ETag présent dans l'en-tête HTTP et sa conservation permettent de vérifier que ce fichier volumineux (63 Mio) a été mis à jour avant de le télécharger.
 
-Logiciel sous licence GNU GPL v3
+Système d'exploitation : ce script a été écrit sous Linux (Python 3.5.1) mais devrait fonctionner sous d'autres systèmes.
 
-V. MAGNIN, 26 avril 2016
+Licence : GNU GPL v3
+
+V. MAGNIN, 27 avril 2016
