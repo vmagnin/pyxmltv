@@ -1,4 +1,4 @@
-pyxmltv v0.96
+pyxmltv v0.97
 
 Script Python3 permettant de surveiller un fichier au format XMLTV contenant les programmes de la TNT pour les douze prochains jours.
 
@@ -15,9 +15,9 @@ optional arguments:
 * Pour chercher une expression, la mettre entre guillemets.
     * Exemple : ./pyxmltv.py -m "Linus Torvald" Stallman Linux
 * La casse des mots-clés est prise en compte.
-* Si aucun mot clé n'est fourni, la liste interne au script est utilisée ou celle définie dans perso_xmltv.py si ce fichier existe, ou un autre fichier si on utilise l'option -f.
+* Si aucun mot clé n'est fourni, Si un fichier de mots-clés est spécifié (-f), on l'utilise. Sinon si un fichier perso_xmltv.py existe on l'utilise, sinon on utilise defaut_xmltv.py.
 
-Le fichier perso_xmltv.py contiendra vos propres listes et dictionnaires :
+Le fichier perso_xmltv.py contiendra vos propres listes et dictionnaires, sur le même modèle que defaut_xmltv.py :
     #!/usr/bin/env python3
     # -*- coding: utf-8 -*-
     MOTS_CLES = ("film d'animation", "Linus Torvald", "Stallman")
@@ -34,4 +34,4 @@ Système d'exploitation : ce script a été écrit sous Linux (Python 3.5.1) mai
 
 Licence : GNU GPL v3
 
-V. MAGNIN, 27 avril 2016
+V. MAGNIN, 28 avril 2016

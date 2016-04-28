@@ -4,19 +4,13 @@
 '''
 Surveillance d'un fichier XMLTV contenant les programmes de la TNT pour les
 douze prochains jours.
-./pyxmltv.py -m mot1 mot2 mot3...
-Si aucun mot clé n'est fourni, la liste interne au script est utilisée ou celle
-définie dans persoxmltv.py si ce fichier existe.
-Pour chercher une expression, la mettre entre guillemets.
-Exemple : ./pyxmltv.py -m "Linus Torvald" Stallman Linux
-La casse est prise en compte.
 '''
 
 import zipfile
 import os
 import subprocess
 import datetime
-from urllib.request import urlretrieve, urlopen
+from urllib.request import urlretrieve, urlopen, URLError
 import xml.etree.ElementTree as ET
 import argparse
 import importlib
@@ -25,41 +19,40 @@ import pickle
 import pytz
 
 
-def telecharger_xmltv(url_rss):
+def telecharger_xmltv(url, nom_fichier):
     """
-    Télécharge le fichier situé à url_rss si une nouvelle version est disponible
+    Télécharge le fichier situé à url si une nouvelle version est disponible
     """
-    # On récupère l'ETag du fichier présent dans le répertoire du script :
+    # On récupère l'ETag HTTP du fichier déjà éventuellement
+    # présent dans le répertoire du script :
     try:
         with open("ETag_xmltv.pickle", 'rb') as FICHIER_ETag:
             ANCIEN_ETag = pickle.load(FICHIER_ETag)
-    except:
-        ANCIEN_ETag = ""
+    except OSError:
+        ANCIEN_ETag = "0"
 
-    # On récupère l'ETag du zip sur le serveur :
+    # On récupère l'ETag HTTP du zip sur le serveur :
     try:
-        entete = urlopen("http://kevinpato.free.fr/xmltv/download/complet.zip").info()
+        entete = urlopen(url+nom_fichier).info()
         match = re.search(r'ETag: "(\w+-\w+-\w+)"', str(entete))
         ETag = match.group(1)
-    except:
-        ETag = ""
+    except URLError:
+        ETag = "00"
 
     # On retélécharge le zip s'il a été modifié sur le serveur:
     if ETag != ANCIEN_ETag:
         try:
-            urlretrieve(url_rss, 'complet.zip')
-        except:
-            print("Attention ! Téléchargement impossible")
-            if not os.access("complet.zip", os.F_OK):
+            urlretrieve(url+nom_fichier, nom_fichier)
+            with zipfile.ZipFile(nom_fichier, 'r') as zfile:
+                zfile.extractall()
+                # On sauvegarde l'ETag du fichier zip :
+                with open("ETag_xmltv.pickle", 'wb') as FICHIER_ETag:
+                    pickle.dump(ETag, FICHIER_ETag)
+        except URLError:
+            print("Attention ! Téléchargement nouveau fichier impossible...")
+            if not os.access(nom_fichier, os.F_OK):
+                print("Erreur : pas de fichier dans le répertoire courant !")
                 exit(2)
-
-        zfile = zipfile.ZipFile('complet.zip', 'r')
-        zfile.extractall()
-        zfile.close()
-
-        # On sauvegarde l'ETag du fichier zip :
-        with open("ETag_xmltv.pickle", 'wb') as FICHIER_ETag:
-            pickle.dump(ETag, FICHIER_ETag)
 
 
 def enregistrer_resultats(dico_resultats):
@@ -94,15 +87,15 @@ PARSARG.add_argument("-q", action="store_true",
 PARSARG.add_argument("-p", action="store_true",
                      help="Affichage uniquement en ligne de commandes (print)")
 PARSARG.add_argument("-v", action="version",
-                     version="%(prog)s v0.96 Licence GPLv3", help="Version")
+                     version="%(prog)s v0.97 Licence GPLv3", help="Version")
 ARGS = PARSARG.parse_args()
 
 # Si un fichier de mots-clés est spécifié, on l'utilise. Sinon si un fichier
-# persoxmltv.py existe on l'utilise, sinon on utilise des listes par défaut :
+# perso_xmltv.py existe on l'utilise, sinon on utilise defaut_xmltv.py :
 if ARGS.f is not None:
     try:
         MODU = importlib.import_module(ARGS.f[0])
-    except:
+    except ImportError:
         print("Erreur : fichier de mots-clés introuvable")
         exit(1)
 
@@ -113,59 +106,15 @@ if ARGS.f is not None:
 else:
     try:
         from perso_xmltv import MOTS_CLES, TAGS_A_EXPLORER, CATEGORIES_A_EVITER, CHAINE_RECUES
-    except:
-        MOTS_CLES = ("Jude Law", "Star Wars", "La guerre des étoiles",
-                     "film d'animation", "téléfilm d'animation", "pop %26 rock",
-                     "Led Zeppelin", "Arvo Pärt", "Bowie", "Björk", "écologie",
-                     "Anne Closset", "Yann Arthus-Bertrand", "nucléaire",
-                     "film de science-fiction", " astronomie", "chercheur",
-                     "brevets",
-                     "Snowden", "Linux", "Linus Torvald", "Stallman")
-        TAGS_A_EXPLORER = ("title", "sub-title", "desc", "director", "actor",
-                           "composer", "date", "category")
-        CATEGORIES_A_EVITER = ("série", "série d'animation", "journal",
-                               "magazine sportif", "météo", "clips",
-                               "téléréalité")
-        CHAINE_RECUES = {'C1.telerama.fr': 'TF1',
-                         'C2.telerama.fr': 'France 2',
-                         'C3.telerama.fr': 'France 3',
-                         'C112.telerama.fr': 'France 3 Nord Pas-de-Calais',
-                         'C5.telerama.fr': 'France 5',
-                         'C6.telerama.fr': 'M6',
-                         'C7.telerama.fr': 'Arte',
-                         'C8.telerama.fr': 'D8',
-                         'C9.telerama.fr': 'W9',
-                         'C10.telerama.fr': 'TMC',
-                         'C11.telerama.fr': 'NT1',
-                         'C12.telerama.fr': 'NRJ 12',
-                         'C13.telerama.fr': 'France 4',
-                         'C14.telerama.fr': 'La Chaîne Parlementaire',
-                         'C15.telerama.fr': 'BFM TV',
-                         'C16.telerama.fr': 'iTélé',
-                         'C17.telerama.fr': 'D17',
-                         'C18.telerama.fr': 'Gulli',
-                         'C119.telerama.fr': 'France Ô',
-                         'C4131.telerama.fr': 'HD1',
-                         'C4132.telerama.fr': "L'Equipe 21",
-                         'C4133.telerama.fr': '6ter',
-                         'C4134.telerama.fr': 'Numéro 23',
-                         'C4135.telerama.fr': 'RMC Découverte',
-                         'C4136.telerama.fr': 'Chérie 25',
-                         'C133.telerama.fr': 'LCI - La Chaîne Info',
-                         'C87.telerama.fr': 'Euronews',
-                         'C131.telerama.fr': 'La Une',
-                         'C130.telerama.fr': 'La Deux',
-                         'C811.telerama.fr': 'la Trois'}
+    except ImportError:
+        from defaut_xmltv import MOTS_CLES, TAGS_A_EXPLORER, CATEGORIES_A_EVITER, CHAINE_RECUES
 
 # Sans tous les cas, s'il y a des mots-clés en arguments, c'est eux qu'on utilise :
 if ARGS.m is not None:
     MOTS_CLES = ARGS.m
 
-# Programmes des chaînes de la TNT gratuite, payante et des chaînes locales sur 12 jours :
-#telecharger_xmltv('http://kevinpato.free.fr/xmltv/download/tnt.zip')
 # Programme de plus de 190 chaînes sur les 12 prochains jours :
-telecharger_xmltv('http://kevinpato.free.fr/xmltv/download/complet.zip')
-
+telecharger_xmltv('http://kevinpato.free.fr/xmltv/download/', 'complet.zip')
 # On crée l'arbre XML (ElementTree) :
 ARBRE = ET.parse('complet.xml')
 RACINE = ARBRE.getroot()
@@ -263,7 +212,9 @@ for programme in RACINE.findall('programme'):
 # On enregistre et on affiche les résultats :
 enregistrer_resultats(DICT_RESULTATS)
 
+# Si on n'est pas en mode "quiet" (-q) :
 if not ARGS.q:
+    # Si option -p on affiche dans le terminal, sinon dans le navigateur :
     if ARGS.p:
         for clef in sorted(DICT_RESULTATS):
             print(DICT_RESULTATS[clef])
