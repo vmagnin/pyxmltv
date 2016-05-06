@@ -51,3 +51,7 @@ CHAINE_RECUES = {'C1.telerama.fr': 'TF1',
                     'C131.telerama.fr': 'La Une',
                     'C130.telerama.fr': 'La Deux',
                     'C811.telerama.fr': 'la Trois'}
+
+SITES_CHAINES = {'Arte': 'http://www.arte.tv/guide/fr',
+                 'Gulli': 'http://www.gulli.fr/programme-tv',
+                 'la Trois': 'http://www.rtbf.be/tv/latrois/guide-tv'}

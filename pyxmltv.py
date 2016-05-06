@@ -55,6 +55,13 @@ def telecharger_xmltv(url, nom_fichier):
                 exit(2)
 
 
+def string_lien_http(url):
+    """
+    Renvoie sous forme de chaine un lien http codé en HTML
+    """
+    return '<a href="' + url + '">' + url + '</a>'
+
+
 def enregistrer_resultats(dico_resultats):
     """
     Enregistre les résultats par ordre chronologique dans un fichier HTML5
@@ -63,8 +70,7 @@ def enregistrer_resultats(dico_resultats):
         resultats.write('<!DOCTYPE html>\n<html>\n<head><meta charset="UTF-8" /></head>\n')
         # On met un lien vers un programme TV, ça peut servir :
         lien = 'http://television.telerama.fr/tele/grille.php'
-        resultats.write('<body> <a href="' + lien + '">'
-                        + lien + '</a><br /><br />\n')
+        resultats.write('<body> ' + string_lien_http(lien) + '<br /><br />\n')
         # Ecrire les résultats par ordre chronologique (cle) :
         for cle in sorted(dico_resultats):
             resultats.write(dico_resultats[cle])
@@ -87,10 +93,10 @@ PARSARG.add_argument("-q", action="store_true",
 PARSARG.add_argument("-p", action="store_true",
                      help="Affichage uniquement en ligne de commandes (print)")
 PARSARG.add_argument("-v", action="version",
-                     version="%(prog)s v0.97 Licence GPLv3", help="Version")
+                     version="%(prog)s v1.0 Licence GPLv3", help="Version")
 ARGS = PARSARG.parse_args()
 
-# Si un fichier de mots-clés est spécifié, on l'utilise. Sinon si un fichier
+# Si un fichier de configuration est spécifié, on l'utilise. Sinon si un fichier
 # perso_xmltv.py existe on l'utilise, sinon on utilise defaut_xmltv.py :
 if ARGS.f is not None:
     try:
@@ -103,11 +109,12 @@ if ARGS.f is not None:
     TAGS_A_EXPLORER = MODU.TAGS_A_EXPLORER
     CATEGORIES_A_EVITER = MODU.CATEGORIES_A_EVITER
     CHAINE_RECUES = MODU.CHAINE_RECUES
+    SITES_CHAINES = MODU.SITES_CHAINES
 else:
     try:
-        from perso_xmltv import MOTS_CLES, TAGS_A_EXPLORER, CATEGORIES_A_EVITER, CHAINE_RECUES
+        from perso_xmltv import MOTS_CLES, TAGS_A_EXPLORER, CATEGORIES_A_EVITER, CHAINE_RECUES, SITES_CHAINES
     except ImportError:
-        from defaut_xmltv import MOTS_CLES, TAGS_A_EXPLORER, CATEGORIES_A_EVITER, CHAINE_RECUES
+        from defaut_xmltv import MOTS_CLES, TAGS_A_EXPLORER, CATEGORIES_A_EVITER, CHAINE_RECUES, SITES_CHAINES
 
 # Sans tous les cas, s'il y a des mots-clés en arguments, c'est eux qu'on utilise :
 if ARGS.m is not None:
@@ -167,11 +174,14 @@ for programme in RACINE.findall('programme'):
 
     # Troisième passe : mise en forme pour affichage de cette émission
     chaine = CHAINE_RECUES[programme.attrib['channel']]
+    url_chaine = ""
+    if chaine in SITES_CHAINES:
+        url_chaine = SITES_CHAINES[chaine]
     debut = programme.attrib['start']
     date_heure_debut = datetime.datetime.strptime(debut, "%Y%m%d%H%M%S %z")
     emission = date_heure_debut.strftime("%A %d/%m/%Y de %H:%M à ") \
              + date_heure_fin.strftime("%H:%M") + " sur <em>" + chaine \
-             + "</em> <br /> \n"
+             + "</em> : " + string_lien_http(url_chaine) + "<br /> \n"
     # On passe en revue les sous-éléments et on formatte le résultat :
     passages_a_la_ligne = 0
     for element in programme.iter():
@@ -199,7 +209,7 @@ for programme in RACINE.findall('programme'):
             emission = emission + avant + texte + apres
 
     # On ajoute un séparateur (barre horizontale) entre chaque programme :
-    emission = "\n<hr /> \n" + emission
+    emission = "\n <br /><hr /><br />\n" + emission
     # On met les mots-clés en gras :
     for mot in MOTS_CLES:
         emission = emission.replace(mot, "<strong>"+mot+"</strong>")

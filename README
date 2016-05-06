@@ -1,4 +1,4 @@
-pyxmltv v0.97
+pyxmltv v1.0
 
 Script Python3 permettant de surveiller un fichier au format XMLTV contenant les programmes de la TNT pour les douze prochains jours.
 
@@ -24,6 +24,7 @@ Le fichier perso_xmltv.py contiendra vos propres listes et dictionnaires, sur le
     TAGS_A_EXPLORER = ("title", "category")
     CATEGORIES_A_EVITER = ("série", "téléréalité")
     CHAINE_RECUES = {'C1.telerama.fr': 'TF1', 'C2.telerama.fr': 'France 2'}
+    SITES_CHAINES = {'Arte': 'http://www.arte.tv/guide/fr'}
 Il ne sera pas inclus dans le dépôt GitHub. Vous pourrez utiliser d'autres fichiers sur le même modèle avec l'option -f.
 
 Le fichier XMLTV est récupéré à cette adresse :
@@ -34,4 +35,4 @@ Système d'exploitation : ce script a été écrit sous Linux (Python 3.5.1) mai
 
 Licence : GNU GPL v3
 
-V. MAGNIN, 28 avril 2016
+V. MAGNIN, 6 mai 2016
