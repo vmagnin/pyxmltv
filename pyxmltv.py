@@ -189,6 +189,7 @@ for programme in RACINE.findall('programme'):
         # Attention, certains éléments peuvent être vides :
         if (texte[0] != "\n") & (texte != "None"):
             if element.tag == "title":
+                titre = texte
                 texte = "<h2>"+texte+"</h2>\n"
                 apres = ""
             elif element.tag == "sub-title":
@@ -205,6 +206,9 @@ for programme in RACINE.findall('programme'):
                 passages_a_la_ligne += 1
             else:
                 avant = ""
+
+            if (element.tag == "category") & (texte == "film"):
+                texte = '<a href="http://www.allocine.fr/recherche/?q=' + titre.replace(" ", "+") + '">' + texte + '</a>'
 
             emission = emission + avant + texte + apres
 
