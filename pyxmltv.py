@@ -93,7 +93,7 @@ PARSARG.add_argument("-q", action="store_true",
 PARSARG.add_argument("-p", action="store_true",
                      help="Affichage uniquement en ligne de commandes (print)")
 PARSARG.add_argument("-v", action="version",
-                     version="%(prog)s v1.1 Licence GPLv3", help="Version")
+                     version="%(prog)s v1.2 Licence GPLv3", help="Version")
 ARGS = PARSARG.parse_args()
 
 # Si un fichier de configuration est spécifié, on l'utilise. Sinon si un fichier
@@ -179,8 +179,10 @@ for programme in RACINE.findall('programme'):
         url_chaine = SITES_CHAINES[chaine]
     debut = programme.attrib['start']
     date_heure_debut = datetime.datetime.strptime(debut, "%Y%m%d%H%M%S %z")
+    duree = re.search(r'(\d+:\d+):', str(date_heure_fin - date_heure_debut))
     emission = date_heure_debut.strftime("%A %d/%m/%Y de %H:%M à ") \
-             + date_heure_fin.strftime("%H:%M") + " sur <em>" + chaine \
+             + date_heure_fin.strftime("%H:%M") \
+             + " (" + duree.group(1).replace(":", "h") + ") sur <em>" + chaine \
              + "</em> : " + string_lien_http(url_chaine) + "<br /> \n"
     # On passe en revue les sous-éléments et on formatte le résultat :
     passages_a_la_ligne = 0
