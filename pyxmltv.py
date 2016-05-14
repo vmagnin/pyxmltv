@@ -93,7 +93,7 @@ PARSARG.add_argument("-q", action="store_true",
 PARSARG.add_argument("-p", action="store_true",
                      help="Affichage uniquement en ligne de commandes (print)")
 PARSARG.add_argument("-v", action="version",
-                     version="%(prog)s v1.2 Licence GPLv3", help="Version")
+                     version="%(prog)s v1.2.1 Licence GPLv3", help="Version")
 ARGS = PARSARG.parse_args()
 
 # Si un fichier de configuration est spécifié, on l'utilise. Sinon si un fichier
@@ -209,7 +209,7 @@ for programme in RACINE.findall('programme'):
             else:
                 avant = ""
 
-            if (element.tag == "category") & (texte == "film"):
+            if (element.tag == "category") & (texte in ["film", "téléfilm"]):
                 texte = '<a href="http://www.allocine.fr/recherche/?q=' + titre.replace(" ", "+") + '">' + texte + '</a>'
 
             emission = emission + avant + texte + apres

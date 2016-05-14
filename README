@@ -1,4 +1,4 @@
-pyxmltv v1.2
+pyxmltv v1.2.1
 
 Script Python3 permettant de surveiller un fichier au format XMLTV contenant les programmes de la TNT pour les douze prochains jours.
 
@@ -35,4 +35,4 @@ Système d'exploitation : ce script a été écrit sous Linux (Python 3.5.1) mai
 
 Licence : GNU GPL v3
 
-V. MAGNIN, 7 mai 2016
+V. MAGNIN, 14 mai 2016
