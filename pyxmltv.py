@@ -80,6 +80,7 @@ def enregistrer_resultats(dico_resultats):
 #****************************************************************
 # Programme principal
 #****************************************************************
+SEPARATEUR = "<br />\n" + "_"*80 + "<br /><br />\n"
 NAVIGATEUR = "firefox"
 
 # Options de la ligne de commandes :
@@ -215,7 +216,7 @@ for programme in RACINE.findall('programme'):
             emission = emission + avant + texte + apres
 
     # On ajoute un séparateur (barre horizontale) entre chaque programme :
-    emission = "\n <br /><hr /><br />\n" + emission
+    emission = SEPARATEUR + emission
     # On met les mots-clés en gras :
     for mot in MOTS_CLES:
         emission = emission.replace(mot, "<strong>"+mot+"</strong>")
