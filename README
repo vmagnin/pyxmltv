@@ -1,6 +1,7 @@
-pyxmltv v1.2.1
+pyxmltv v1.3
 
-Script Python3 permettant de surveiller un fichier au format XMLTV contenant les programmes de la TNT pour les douze prochains jours.
+Script Python3 permettant de surveiller un fichier au format XMLTV contenant les
+programmes de la TNT française pour les douze prochains jours.
 
 usage: pyxmltv.py [-h] [-m mot [mot ...]] [-f fichier] [-q] [-p] [-v]                       
 
@@ -12,12 +13,17 @@ optional arguments:
   -p                Affichage uniquement en ligne de commandes (print)
   -v                Version
 
-* Pour chercher une expression, la mettre entre guillemets.
-    * Exemple : ./pyxmltv.py -m "Linus Torvald" Stallman Linux
+* Priorités d'utilisation des mots-clés :
+    1) mots-clés fournis par l'option -m,
+    2) fichier de mots-clés spécifié par -f,
+    3) fichier perso_xmltv.py,
+    4) fichier defaut_xmltv.py en dernier recours.
+* Pour chercher une expression, la mettre entre guillemets, par exemple :
+    ./pyxmltv.py -m "Linus Torvald" Stallman Linux
 * La casse des mots-clés est prise en compte.
-* Si aucun mot clé n'est fourni, Si un fichier de mots-clés est spécifié (-f), on l'utilise. Sinon si un fichier perso_xmltv.py existe on l'utilise, sinon on utilise defaut_xmltv.py.
 
-Le fichier perso_xmltv.py contiendra vos propres listes et dictionnaires, sur le même modèle que defaut_xmltv.py :
+Votre fichier perso_xmltv.py contiendra vos propres listes et dictionnaires,
+sur le même modèle que defaut_xmltv.py :
     #!/usr/bin/env python3
     # -*- coding: utf-8 -*-
     MOTS_CLES = ("film d'animation", "Linus Torvald", "Stallman")
@@ -25,14 +31,17 @@ Le fichier perso_xmltv.py contiendra vos propres listes et dictionnaires, sur le
     CATEGORIES_A_EVITER = ("série", "téléréalité")
     CHAINE_RECUES = {'C1.telerama.fr': 'TF1', 'C2.telerama.fr': 'France 2'}
     SITES_CHAINES = {'Arte': 'http://www.arte.tv/guide/fr'}
-Il ne sera pas inclus dans le dépôt GitHub. Vous pourrez utiliser d'autres fichiers sur le même modèle avec l'option -f.
+Il ne sera pas inclus dans le dépôt GitHub, ce qui permet de découpler le 
+développement du script et l'utilisation personnelle. Vous pourrez utiliser 
+d'autres fichiers sur le même modèle avec l'option -f.
 
 Le fichier XMLTV est récupéré à cette adresse :
 http://kevinpato.free.fr/xmltv/download/complet.zip
-Le téléchargement de l'ETag présent dans l'en-tête HTTP et sa conservation permettent de vérifier que ce fichier volumineux (63 Mio) a été mis à jour avant de le télécharger.
+Le téléchargement de l'ETag présent dans l'en-tête HTTP et sa conservation 
+permettent de vérifier que ce fichier volumineux (63 Mio) a été mis à jour avant
+de le télécharger.
 
-Système d'exploitation : ce script a été écrit sous Linux (Python 3.5.1) mais devrait fonctionner sous d'autres systèmes.
+Ce script a été écrit sous Linux (Python 3.5.1) mais devrait fonctionner sous 
+d'autres systèmes. Il est distribué sous licence GNU GPL v3.
 
-Licence : GNU GPL v3
-
-V. MAGNIN, 14 mai 2016
+V. MAGNIN, 15 mai 2016
