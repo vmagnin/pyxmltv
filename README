@@ -1,9 +1,9 @@
-pyxmltv v1.3
+pyxmltv v1.4
 
-Script Python3 permettant de surveiller un fichier au format XMLTV contenant les
-programmes de la TNT française pour les douze prochains jours.
+Script Python3 permettant de surveiller un fichier au format XMLTV contenant
+les programmes de la TNT française pour les prochains jours.
 
-usage: pyxmltv.py [-h] [-m mot [mot ...]] [-f fichier] [-q] [-p] [-v]                       
+usage: pyxmltv.py [-h] [-m mot [mot ...]] [-f fichier] [-q] [-p] [-v]
 
 optional arguments:
   -h, --help        show this help message and exit
@@ -31,17 +31,21 @@ sur le même modèle que defaut_xmltv.py :
     CATEGORIES_A_EVITER = ("série", "téléréalité")
     CHAINE_RECUES = {'C1.telerama.fr': 'TF1', 'C2.telerama.fr': 'France 2'}
     SITES_CHAINES = {'Arte': 'http://www.arte.tv/guide/fr'}
+
 Il ne sera pas inclus dans le dépôt GitHub, ce qui permet de découpler le 
 développement du script et l'utilisation personnelle. Vous pourrez utiliser 
 d'autres fichiers sur le même modèle avec l'option -f.
 
-Le fichier XMLTV est récupéré à cette adresse :
-http://kevinpato.free.fr/xmltv/download/complet.zip
+Le fichier XMLTV est récupéré à cette adresse (depuis sept. 2017) :
+http://racacaxtv.ga/xmltv/xmltv.zip
+
 Le téléchargement de l'ETag présent dans l'en-tête HTTP et sa conservation 
-permettent de vérifier que ce fichier volumineux (63 Mio) a été mis à jour avant
+permettent de vérifier que ce fichier volumineux a été mis à jour avant
 de le télécharger.
 
 Ce script a été écrit sous Linux (Python 3.5.1) mais devrait fonctionner sous 
 d'autres systèmes. Il est distribué sous licence GNU GPL v3.
 
-V. MAGNIN, 15 mai 2016
+V. MAGNIN, 10 septembre 2017
+
+P.s. L'ancienne source http://kevinpato.free.fr/xmltv/download/complet.zip ne semble plus mise à jour depuis fin août 2017.
