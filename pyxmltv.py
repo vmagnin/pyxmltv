@@ -122,10 +122,14 @@ else:
 if ARGS.m is not None:
     MOTS_CLES = ARGS.m
 
-# Programme de plus de 190 chaînes sur les 12 prochains jours :
-telecharger_xmltv('http://kevinpato.free.fr/xmltv/download/', 'complet.zip')
+# NE FONCTIONNE PLUS DEPUIS sept. 2017 : Programme de plus de 190 chaînes sur les 12 prochains jours :
+# telecharger_xmltv('http://kevinpato.free.fr/xmltv/download/', 'complet.zip')
+# ARBRE = ET.parse('complet.xml')
+
+# Nouvelle source (http://allfrtv.ga/xmltv.php) :
+telecharger_xmltv('http://racacaxtv.ga/xmltv/', 'xmltv.zip')
 # On crée l'arbre XML (ElementTree) :
-ARBRE = ET.parse('complet.xml')
+ARBRE = ET.parse('xmltv.xml')
 RACINE = ARBRE.getroot()
 
 # On crée un dictionnaire des chaînes présentes dans le fichier XMLTV :
@@ -161,7 +165,7 @@ for programme in RACINE.findall('programme'):
         if element.tag in TAGS_A_EXPLORER:
             texte = str(element.text)
             for mot in MOTS_CLES:
-                if texte.find(mot) != -1:
+                if (texte.find(mot) != -1) or (texte.find(mot.capitalize()) != -1):
                     interessant = True
                     break
             if interessant:
@@ -187,6 +191,7 @@ for programme in RACINE.findall('programme'):
              + date_heure_fin.strftime("%H:%M") \
              + " (" + duree.group(1).replace(":", "h") + ") sur <em>" + chaine \
              + "</em> : " + string_lien_http(url_chaine) + "<br /> \n"
+
     # On passe en revue les sous-éléments et on formatte le résultat :
     passages_a_la_ligne = 0
     for element in programme.iter():
@@ -219,9 +224,12 @@ for programme in RACINE.findall('programme'):
 
     # On ajoute un séparateur (barre horizontale) entre chaque programme :
     emission = SEPARATEUR + emission
+
     # On met les mots-clés en gras :
     for mot in MOTS_CLES:
         emission = emission.replace(mot, "<strong>"+mot+"</strong>")
+        emission = emission.replace(mot.capitalize(), "<strong>"+mot.capitalize()+"</strong>")
+
     # On traduit le caractère & de l'HTML :
     emission = emission.replace("%26", "&")
 
