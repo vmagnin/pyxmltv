@@ -39,6 +39,8 @@ def telecharger_xmltv(url, nom_fichier):
         ETag = match.group(1)
     except URLError:
         ETag = "00"
+    except AttributeError:  # Si match est vide (pas de ETag disponible)
+        ETag = "00"
 
     # On retélécharge le zip s'il a été modifié sur le serveur:
     if ETag != ANCIEN_ETag:
