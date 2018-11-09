@@ -44,6 +44,7 @@ def telecharger_xmltv(url, nom_fichier):
         ETag = "00"
         print("Pas de ETag disponible sur le site")
         print(entete)
+        ANCIEN_ETag = "0"    # On force le téléchargement du zip
 
     # On retélécharge le zip s'il a été modifié sur le serveur:
     if ETag != ANCIEN_ETag:
