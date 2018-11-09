@@ -39,8 +39,11 @@ def telecharger_xmltv(url, nom_fichier):
         ETag = match.group(1)
     except URLError:
         ETag = "00"
+        print("URL erronée")
     except AttributeError:  # Si match est vide (pas de ETag disponible)
         ETag = "00"
+        print("Pas de ETag disponible sur le site")
+        print(entete)
 
     # On retélécharge le zip s'il a été modifié sur le serveur:
     if ETag != ANCIEN_ETag:
@@ -129,9 +132,14 @@ if ARGS.m is not None:
 # ARBRE = ET.parse('complet.xml')
 
 # Nouvelle source (http://allfrtv.ga/xmltv.php) :
-telecharger_xmltv('http://racacaxtv.ga/xmltv/', 'xmltv.zip')
+#telecharger_xmltv('http://racacaxtv.ga/xmltv/', 'xmltv.zip') ne marche plus
+#telecharger_xmltv('http://myxmltv.lescigales.org/', 'xmltv.zip')
+# Autre source disponible (il faudrait renommer les chaines dans l'autre fichier) :
+telecharger_xmltv('http://www.xmltv.fr/guide/', 'tvguide.zip')
+
 # On crée l'arbre XML (ElementTree) :
-ARBRE = ET.parse('xmltv.xml')
+#ARBRE = ET.parse('xmltv.xml')
+ARBRE = ET.parse('tvguide.xml')
 RACINE = ARBRE.getroot()
 
 # On crée un dictionnaire des chaînes présentes dans le fichier XMLTV :
