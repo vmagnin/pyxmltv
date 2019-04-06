@@ -1,88 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 '''
 Surveillance d'un fichier XMLTV contenant les programmes de la TNT pour les
 douze prochains jours.
 '''
 
-import zipfile
-import os
 import subprocess
 import datetime
 import locale
-from urllib.request import urlretrieve, urlopen, URLError
 import xml.etree.ElementTree as ET
 import argparse
 import importlib
 import re
-import pickle
 import pytz
 
-
-def telecharger_xmltv(url, nom_fichier):
-    """
-    Télécharge le fichier situé à url si une nouvelle version est disponible
-    """
-    # On récupère l'ETag HTTP du fichier déjà éventuellement
-    # présent dans le répertoire du script :
-    try:
-        with open("ETag_xmltv.pickle", 'rb') as FICHIER_ETag:
-            ANCIEN_ETag = pickle.load(FICHIER_ETag)
-    except OSError:
-        ANCIEN_ETag = "0"
-
-    # On récupère l'ETag HTTP du zip sur le serveur :
-    try:
-        entete = urlopen(url+nom_fichier).info()
-        match = re.search(r'ETag: "(\w+-\w+-\w+)"', str(entete))
-        ETag = match.group(1)
-    except URLError:
-        ETag = "00"
-        print("URL erronée")
-    except AttributeError:  # Si match est vide (pas de ETag disponible)
-        ETag = "00"
-        print("Pas de ETag disponible sur le site")
-        print(entete)
-        ANCIEN_ETag = "0"    # On force le téléchargement du zip
-
-    # On retélécharge le zip s'il a été modifié sur le serveur:
-    if ETag != ANCIEN_ETag:
-        try:
-            urlretrieve(url+nom_fichier, nom_fichier)
-            with zipfile.ZipFile(nom_fichier, 'r') as zfile:
-                zfile.extractall()
-                # On sauvegarde l'ETag du fichier zip :
-                with open("ETag_xmltv.pickle", 'wb') as FICHIER_ETag:
-                    pickle.dump(ETag, FICHIER_ETag)
-        except URLError:
-            print("Attention ! Téléchargement nouveau fichier impossible...")
-            if not os.access(nom_fichier, os.F_OK):
-                print("Erreur : pas de fichier dans le répertoire courant !")
-                exit(2)
-
-
-def string_lien_http(url):
-    """
-    Renvoie sous forme de chaine un lien http codé en HTML
-    """
-    return '<a href="' + url + '">' + url + '</a>'
-
-
-def enregistrer_resultats(dico_resultats):
-    """
-    Enregistre les résultats par ordre chronologique dans un fichier HTML5
-    """
-    with open("tnt.html", "w") as resultats:
-        resultats.write('<!DOCTYPE html>\n<html>\n<head><meta charset="UTF-8" /></head>\n')
-        # On met un lien vers un programme TV, ça peut servir :
-        lien = 'http://television.telerama.fr/tele/grille.php'
-        resultats.write('<body> ' + string_lien_http(lien) + '<br /><br />\n')
-        # Ecrire les résultats par ordre chronologique (cle) :
-        for cle in sorted(dico_resultats):
-            resultats.write(dico_resultats[cle])
-        # Fin du fichier :
-        resultats.write("</body> \n </html> \n")
+# Modules du projet :
+from telecharger_xmltv import telecharger_xmltv
+from enregistrer_xmltv import enregistrer_resultats, string_lien_http
 
 #****************************************************************
 # Programme principal
@@ -128,19 +62,16 @@ else:
 if ARGS.m is not None:
     MOTS_CLES = ARGS.m
 
-# NE FONCTIONNE PLUS DEPUIS sept. 2017 : Programme de plus de 190 chaînes sur les 12 prochains jours :
-# telecharger_xmltv('http://kevinpato.free.fr/xmltv/download/', 'complet.zip')
-# ARBRE = ET.parse('complet.xml')
-
 # Nouvelle source (http://allfrtv.ga/xmltv.php) :
-#telecharger_xmltv('http://racacaxtv.ga/xmltv/', 'xmltv.zip') ne marche plus
 #telecharger_xmltv('http://myxmltv.lescigales.org/', 'xmltv.zip')
-# Autre source disponible (il faudrait renommer les chaines dans l'autre fichier) :
-telecharger_xmltv('http://www.xmltv.fr/guide/', 'tvguide.zip')
-
 # On crée l'arbre XML (ElementTree) :
 #ARBRE = ET.parse('xmltv.xml')
+
+# Autre source disponible (il faudrait renommer les chaines dans l'autre fichier) :
+telecharger_xmltv('http://www.xmltv.fr/guide/', 'tvguide.zip')
+# On crée l'arbre XML (ElementTree) :
 ARBRE = ET.parse('tvguide.xml')
+
 RACINE = ARBRE.getroot()
 
 # On crée un dictionnaire des chaînes présentes dans le fichier XMLTV :
