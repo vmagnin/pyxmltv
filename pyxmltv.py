@@ -45,7 +45,7 @@ PARSARG.add_argument("-q", action="store_true",
 PARSARG.add_argument("-p", action="store_true",
                      help="Affichage uniquement en ligne de commandes (print)")
 PARSARG.add_argument("-v", action="version",
-                     version="%(prog)s v1.4 Licence GPLv3", help="Version")
+                     version="%(prog)s v1.5 Licence GPLv3", help="Version")
 ARGS = PARSARG.parse_args()
 
 # Si un fichier de configuration est spécifié, on l'utilise. Sinon si un fichier
