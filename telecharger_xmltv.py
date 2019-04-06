@@ -49,12 +49,17 @@ def telecharger_xmltv(url, nom_fichier):
         print("URL erronée")
     except AttributeError:  # Si match est vide (pas de ETag disponible)
         ETag = "00"
-        print("Pas de ETag disponible sur le site")
-        print(entete)
-        ANCIEN_ETag = "0"    # On force le téléchargement du zip
+        # On essaie d'utiliser à la place le champ Last-Modified
+        try:
+            entete = urlopen(url+nom_fichier).info()
+            match = re.search(r'Last-Modified: (.*)', str(entete))
+            ETag = match.group(1)
+        except AttributeError:
+            ANCIEN_ETag = "0"    # On force le téléchargement du zip
 
     # On retélécharge le zip s'il a été modifié sur le serveur:
     if ETag != ANCIEN_ETag:
+        print("Chargement de la dernière version en ligne...")
         try:
             urlretrieve(url+nom_fichier, nom_fichier)
             with zipfile.ZipFile(nom_fichier, 'r') as zfile:
