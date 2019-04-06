@@ -18,7 +18,7 @@
 
 '''
 Surveillance d'un fichier XMLTV contenant les programmes de la TNT pour les
-douze prochains jours.
+prochains jours.
 '''
 
 import subprocess
@@ -34,24 +34,18 @@ import pytz
 from telecharger_xmltv import telecharger_xmltv
 from enregistrer_xmltv import enregistrer_resultats, string_lien_http
 
-#****************************************************************
-# Programme principal
-#****************************************************************
-SEPARATEUR = "<br />\n" + "_"*80 + "<br /><br />\n"
-NAVIGATEUR = "firefox"
-
 # Options de la ligne de commandes :
-PARSARG = argparse.ArgumentParser(description="Surveillance d'un fichier XMLTV contenant les programmes de la TNT pour les douze prochains jours", epilog="Sources : <https://github.com/vmagnin/pyxmltv>")
+PARSARG = argparse.ArgumentParser(description="Surveillance d'un fichier XMLTV contenant les programmes de la TNT pour les prochains jours", epilog="Sources : <https://github.com/vmagnin/pyxmltv>")
 PARSARG.add_argument("-m", action="store", nargs="+",
                      help="Liste de mots-clés ou d'expressions (entre guillemets)", metavar="mot")
 PARSARG.add_argument("-f", action="store", nargs=1,
                      help="Fichier .py de mots-clés", metavar="fichier")
 PARSARG.add_argument("-q", action="store_true",
-                     help="Pas d'affichage (quiet)")
+                     help="Ne lance pas le navigateur (quiet)")
 PARSARG.add_argument("-p", action="store_true",
                      help="Affichage uniquement en ligne de commandes (print)")
 PARSARG.add_argument("-v", action="version",
-                     version="%(prog)s v1.3 Licence GPLv3", help="Version")
+                     version="%(prog)s v1.4 Licence GPLv3", help="Version")
 ARGS = PARSARG.parse_args()
 
 # Si un fichier de configuration est spécifié, on l'utilise. Sinon si un fichier
@@ -74,10 +68,13 @@ else:
     except ImportError:
         from defaut_xmltv import MOTS_CLES, TAGS_A_EXPLORER, CATEGORIES_A_EVITER, CHAINE_RECUES, SITES_CHAINES
 
-# Sans tous les cas, s'il y a des mots-clés en arguments, c'est eux qu'on utilise :
+# Dans tous les cas, s'il y a des mots-clés en arguments, c'est eux qu'on utilise :
 if ARGS.m is not None:
     MOTS_CLES = ARGS.m
 
+#***********************************
+# Téléchargement d'un fichier XMLTV
+#***********************************
 # Nouvelle source (http://allfrtv.ga/xmltv.php) :
 #telecharger_xmltv('http://myxmltv.lescigales.org/', 'xmltv.zip')
 # On crée l'arbre XML (ElementTree) :
@@ -90,16 +87,22 @@ ARBRE = ET.parse('tvguide.xml')
 
 RACINE = ARBRE.getroot()
 
+
+# Constantes :
+SEPARATEUR = "<br />\n" + "_"*80 + "<br /><br />\n"
+NAVIGATEUR = "firefox"
+# Date et heure locales actuelles :
+PARIS = pytz.timezone('Europe/Paris')
+MAINTENANT = PARIS.localize(datetime.datetime.now())
+locale.setlocale(locale.LC_ALL, 'fr_FR.utf8')   # Pour l'affichage des dates
+
+
 # On crée un dictionnaire des chaînes présentes dans le fichier XMLTV :
 DICT_CHAINES = {}
 for item in RACINE.findall('channel'):
     chaine = item.find('display-name').text
     DICT_CHAINES.update({item.get('id'): chaine})
 
-# Date et heure locales actuelles :
-PARIS = pytz.timezone('Europe/Paris')
-MAINTENANT = PARIS.localize(datetime.datetime.now())
-locale.setlocale(locale.LC_ALL, 'fr_FR.utf8')   # Pour l'affichage des dates
 
 # On parcourt l'ensemble des programmes TV :
 DICT_RESULTATS = {}
@@ -196,7 +199,6 @@ for programme in RACINE.findall('programme'):
 
 # On enregistre et on affiche les résultats :
 enregistrer_resultats(DICT_RESULTATS)
-
 # Si on n'est pas en mode "quiet" (-q) :
 if not ARGS.q:
     # Si option -p on affiche dans le terminal, sinon dans le navigateur :
