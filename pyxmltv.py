@@ -33,8 +33,6 @@ import pytz
 # Modules du projet :
 from telecharger_xmltv import telecharger_xmltv
 from enregistrer_xmltv import enregistrer_resultats, string_lien_http
-# Chaînes que vous recevez, avec leurs identifiants et leurs URL :
-from chaines_xmltv import CHAINE_RECUES, SITES_CHAINES
 
 # Options de la ligne de commandes :
 PARSARG = argparse.ArgumentParser(description="Surveillance d'un fichier XMLTV contenant les programmes de la TNT pour les prochains jours", epilog="Sources : <https://github.com/vmagnin/pyxmltv>")
@@ -71,6 +69,13 @@ else:
 # Dans tous les cas, s'il y a des mots-clés en arguments, c'est eux qu'on utilise :
 if ARGS.m is not None:
     MOTS_CLES = ARGS.m
+
+# Chaînes que vous recevez, avec leurs identifiants et leurs URL :
+try:
+    from perso_chaines_xmltv import CHAINE_RECUES, SITES_CHAINES
+except ImportError:   # S'il n'existe pas on se rabbat sur le fichier par défaut :
+    print("Fichier de chaînes par défaut")
+    from defaut_chaines_xmltv import CHAINE_RECUES, SITES_CHAINES
 
 #***********************************
 # Téléchargement d'un fichier XMLTV

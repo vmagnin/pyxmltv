@@ -30,7 +30,9 @@ optional arguments:
 * La casse des mots-clés est prise en compte.
 
 
-## Définir votre fichier perso
+## Définir vos fichiers perso
+
+### fichier `perso_xmltv.py`
 
 Votre fichier `perso_xmltv.py` contiendra vos propres listes et dictionnaires,
 sur le même modèle que `defaut_xmltv.py` :
@@ -41,13 +43,24 @@ sur le même modèle que `defaut_xmltv.py` :
     MOTS_CLES = ("film d'animation", "Linus Torvald", "Stallman")
     TAGS_A_EXPLORER = ("title", "category")
     CATEGORIES_A_EVITER = ("série", "téléréalité")
-    CHAINE_RECUES = {'C1.telerama.fr': 'TF1', 'C2.telerama.fr': 'France 2'}
-    SITES_CHAINES = {'Arte': 'http://www.arte.tv/guide/fr'}
 ```
 
 Il ne sera pas inclus dans le dépôt GitHub, ce qui permet de découpler le 
 développement du script et l'utilisation personnelle. Vous pourrez utiliser 
 d'autres fichiers sur le même modèle avec l'option `-f`.
+
+### fichier `perso_chaines_xmltv.py`
+
+Idem pour le fichier `perso_chaines_xmltv.py` dans lequel vous placerez la liste des chaînes que vous recevez, avec leurs identifiants et leurs URL :
+
+```python
+    #!/usr/bin/env python3
+    # -*- coding: utf-8 -*-
+    CHAINE_RECUES = {'C1.telerama.fr': 'TF1', 'C2.telerama.fr': 'France 2'}
+    SITES_CHAINES = {'Arte': 'http://www.arte.tv/guide/fr'}
+```
+
+En son absence, c'est `defaut_xmltv.py` qui sera utilisé.
 
 
 ## Divers
