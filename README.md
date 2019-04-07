@@ -33,8 +33,7 @@ optional arguments:
 
     `./pyxmltv.py -m "Linus Torvald" Stallman Linux`
 * La casse des mots-clés est prise en compte.
-* Par défaut `NAVIGATEUR = "firefox"`. Vous pouvez modifier cette constante dans
-le fichier `pyxmltv.py`.
+* L'affichage se fait dans le navigateur par défaut.
 
 ## Définir vos fichiers perso
 

@@ -21,7 +21,7 @@ Surveillance d'un fichier XMLTV contenant les programmes de la TNT pour les
 prochains jours.
 '''
 
-import subprocess
+import webbrowser
 import datetime
 import locale
 import xml.etree.ElementTree as ET
@@ -98,7 +98,7 @@ RACINE = ARBRE.getroot()
 
 # Constantes :
 SEPARATEUR = "<br />\n" + "_"*80 + "<br /><br />\n"
-NAVIGATEUR = "firefox"
+
 # Date et heure locales actuelles :
 PARIS = pytz.timezone('Europe/Paris')
 MAINTENANT = PARIS.localize(datetime.datetime.now())
@@ -214,4 +214,4 @@ if not ARGS.q:
         for clef in sorted(DICT_RESULTATS):
             print(DICT_RESULTATS[clef])
     else:
-        subprocess.Popen([NAVIGATEUR, "tnt.html"])
+        webbrowser.open("tnt.html")
