@@ -35,17 +35,20 @@ from telecharger_xmltv import telecharger_xmltv
 from enregistrer_xmltv import enregistrer_resultats, string_lien_http
 
 # Options de la ligne de commandes :
-PARSARG = argparse.ArgumentParser(description="Surveillance d'un fichier XMLTV contenant les programmes de la TNT pour les prochains jours", epilog="Sources : <https://github.com/vmagnin/pyxmltv>")
+PARSARG = argparse.ArgumentParser(description="Surveillance de fichiers XMLTV contenant les programmes de la TNT pour les prochains jours", epilog="Sources : <https://github.com/vmagnin/pyxmltv>")
 PARSARG.add_argument("-m", action="store", nargs="+",
                      help="Liste de mots-clés ou d'expressions (entre guillemets)", metavar="mot")
 PARSARG.add_argument("-f", action="store", nargs=1,
                      help="Fichier .py de mots-clés", metavar="fichier")
+PARSARG.add_argument("-s", action="store", nargs=1, type=int,
+                     choices=[1, 2], default=[1],
+                     help="Source du fichier XMLTV : 1 (défaut) ou 2", metavar="source")
 PARSARG.add_argument("-q", action="store_true",
                      help="Ne lance pas le navigateur (quiet)")
 PARSARG.add_argument("-p", action="store_true",
                      help="Affichage uniquement en ligne de commandes (print)")
 PARSARG.add_argument("-v", action="version",
-                     version="%(prog)s v1.5 Licence GPLv3", help="Version")
+                     version="%(prog)s v1.6 Licence GPLv3", help="Version")
 ARGS = PARSARG.parse_args()
 
 # Si un fichier de configuration est spécifié, on l'utilise. Sinon si un fichier
@@ -80,15 +83,15 @@ except ImportError:   # S'il n'existe pas on se rabbat sur le fichier par défau
 #***********************************
 # Téléchargement d'un fichier XMLTV
 #***********************************
-# Nouvelle source (http://allfrtv.ga/xmltv.php) :
-#telecharger_xmltv('http://myxmltv.lescigales.org/', 'xmltv.zip')
-# On crée l'arbre XML (ElementTree) :
-#ARBRE = ET.parse('xmltv.xml')
-
-# Autre source disponible (il faudrait renommer les chaines dans l'autre fichier) :
-telecharger_xmltv('http://www.xmltv.fr/guide/', 'tvguide.zip')
-# On crée l'arbre XML (ElementTree) :
-ARBRE = ET.parse('tvguide.xml')
+if  ARGS.s[0] == 2:
+    # Voir le site http://allfrtv.ga/xmltv.php
+    telecharger_xmltv('http://myxmltv.lescigales.org/', 'xmltv.zip')
+    # On crée l'arbre XML (ElementTree) :
+    ARBRE = ET.parse('xmltv.xml')
+else:   # Par défaut :
+    telecharger_xmltv('http://www.xmltv.fr/guide/', 'tvguide.zip')
+    # On crée l'arbre XML (ElementTree) :
+    ARBRE = ET.parse('tvguide.xml')
 
 RACINE = ARBRE.getroot()
 

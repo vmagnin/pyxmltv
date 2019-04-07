@@ -1,20 +1,24 @@
-# pyxmltv v1.5
+# pyxmltv v1.6
 
-Script Python 3 sous licence GNU GPL v3 permettant de surveiller un fichier au
+Script Python 3 sous licence GNU GPL v3 permettant de surveiller des fichiers au
 format XMLTV contenant les programmes de la TNT française pour les prochains
-jours. Le fichier XMLTV est récupéré à cette adresse :
-http://www.xmltv.fr/guide/
+jours. Les fichiers XMLTV sont récupérés à ces adresses :
+
+* Source 1 (par défaut) : http://www.xmltv.fr/guide/tvguide.zip
+* Source 2 : http://myxmltv.lescigales.org/xmltv.zip
 
 
 ## Utilisation
 
 ```
-usage: pyxmltv.py [-h] [-m mot [mot ...]] [-f fichier] [-q] [-p] [-v]
+usage: pyxmltv.py [-h] [-m mot [mot ...]] [-f fichier] [-s source] [-q] [-p]
+                  [-v]
 
 optional arguments:
   -h, --help        show this help message and exit
   -m mot [mot ...]  Liste de mots-clés ou d'expressions (entre guillemets)
   -f fichier        Fichier .py de mots-clés
+  -s source         Source du fichier XMLTV : 1 (défaut) ou 2
   -q                Ne lance pas le navigateur (quiet)
   -p                Affichage uniquement en ligne de commandes (print)
   -v                Version
@@ -26,6 +30,7 @@ optional arguments:
     3. fichier `perso_xmltv.py`,
     4. fichier `defaut_xmltv.py` en dernier recours.
 * Pour chercher une expression, la mettre entre guillemets, par exemple :
+
     `./pyxmltv.py -m "Linus Torvald" Stallman Linux`
 * La casse des mots-clés est prise en compte.
 
@@ -45,13 +50,14 @@ sur le même modèle que `defaut_xmltv.py` :
     CATEGORIES_A_EVITER = ("série", "téléréalité")
 ```
 
-Il ne sera pas inclus dans le dépôt GitHub, ce qui permet de découpler le 
-développement du script et l'utilisation personnelle. Vous pourrez utiliser 
+Il ne sera pas inclus dans le dépôt GitHub, ce qui permet de découpler le
+développement du script et l'utilisation personnelle. Vous pourrez utiliser
 d'autres fichiers sur le même modèle avec l'option `-f`.
 
 ### fichier `perso_chaines_xmltv.py`
 
-Idem pour le fichier `perso_chaines_xmltv.py` dans lequel vous placerez la liste des chaînes que vous recevez, avec leurs identifiants et leurs URL :
+Idem pour le fichier `perso_chaines_xmltv.py` dans lequel vous placerez la liste
+des chaînes que vous recevez, avec leurs identifiants et leurs URL :
 
 ```python
     #!/usr/bin/env python3
@@ -62,6 +68,10 @@ Idem pour le fichier `perso_chaines_xmltv.py` dans lequel vous placerez la liste
 
 En son absence, c'est `defaut_xmltv.py` qui sera utilisé.
 
+Si vous utilisez plusieurs sources, plusieurs identifiants peuvent correspondre
+à la même chaîne, ces identifiants n'étant pas normalisés. Dans ce cas, vous
+pouvez sans problème inclure ces différents identifiants dans le même
+dictionnaire.
 
 ## Divers
 
@@ -71,4 +81,4 @@ de le télécharger. S'il n'y a pas d'ETag, on utilise si possible le champ
 Last-Modified.
 
 
-Vincent MAGNIN, 6 avril 2019
+Vincent MAGNIN, 7 avril 2019
