@@ -21,6 +21,7 @@ Surveillance d'un fichier XMLTV contenant les programmes de la TNT pour les
 prochains jours.
 '''
 
+import autopipimport
 import webbrowser
 import datetime
 import locale
