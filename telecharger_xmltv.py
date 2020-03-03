@@ -20,7 +20,6 @@
 Fonction pour télécharger un fichier XMLTV
 '''
 
-import autopipimport
 import zipfile
 import os
 import re
