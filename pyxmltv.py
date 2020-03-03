@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# Vincent MAGNIN, 2016-2019
+# Vincent MAGNIN, 2016-2020
 
 '''
 Surveillance d'un fichier XMLTV contenant les programmes de la TNT pour les
@@ -86,13 +86,14 @@ except ImportError:   # S'il n'existe pas on se rabbat sur le fichier par défau
 #***********************************
 if  ARGS.s[0] == 2:
     # Voir le site http://allfrtv.ga/xmltv.php
-    telecharger_xmltv('http://myxmltv.lescigales.org/', 'xmltv.zip')
+    # telecharger_xmltv('http://myxmltv.lescigales.org/', 'xmltv.zip')
     # On crée l'arbre XML (ElementTree) :
-    ARBRE = ET.parse('xmltv.xml')
+    # ARBRE = ET.parse('xmltv.xml')
+    print("La seconde source semble ne plus fonctionner.")
 else:   # Par défaut :
-    telecharger_xmltv('http://www.xmltv.fr/guide/', 'tvguide.zip')
+    telecharger_xmltv('https://xmltv.ch/xmltv/', 'xmltv-tnt.zip')
     # On crée l'arbre XML (ElementTree) :
-    ARBRE = ET.parse('tvguide.xml')
+    ARBRE = ET.parse('xmltv-tnt.xml')
 
 RACINE = ARBRE.getroot()
 
