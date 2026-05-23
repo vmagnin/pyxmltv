@@ -1,12 +1,13 @@
-# pyxmltv v1.7
+# pyxmltv v1.7.1
 
 Script Python 3 sous licence GNU GPL v3 permettant de surveiller des fichiers au
 format XMLTV contenant les programmes de la TNT française pour les prochains
 jours. Les fichiers XMLTV sont récupérés à ces adresses :
 
-* Source 1 (par défaut) : https://xmltv.ch/xmltv/xmltv-tnt.zip
+* Source 1 (par défaut) : https://xmltvfr.fr/xmltv/xmltv_tnt.zip
 * Source 2 : semble ne plus être disponible...
 
+Le site https://xmltvfr.fr/xmltv/ propose également des fichiers avec plus de chaînes que la TNT. Voir leur description sur https://xmltvfr.fr/xmltv.php
 
 ## Utilisation
 
@@ -79,6 +80,3 @@ Le téléchargement de l'ETag présent dans l'en-tête HTTP et sa conservation
 permettent de s'assurer que le fichier volumineux a été mis à jour avant
 de le télécharger. S'il n'y a pas d'ETag, on utilise si possible le champ
 Last-Modified.
-
-
-Vincent MAGNIN, 3 mars 2020

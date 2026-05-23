@@ -14,7 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# Vincent MAGNIN, 2016-2020
+# Vincent MAGNIN, 2016-2026
+# Dernière modification : 23-05-2026
 
 '''
 Surveillance d'un fichier XMLTV contenant les programmes de la TNT pour les
@@ -48,7 +49,7 @@ PARSARG.add_argument("-q", action="store_true",
 PARSARG.add_argument("-p", action="store_true",
                      help="Affichage uniquement en ligne de commandes (print)")
 PARSARG.add_argument("-v", action="version",
-                     version="%(prog)s v1.7 Licence GPLv3", help="Version")
+                     version="%(prog)s v1.7.1 Licence GPLv3", help="Version")
 ARGS = PARSARG.parse_args()
 
 # Si un fichier de configuration est spécifié, on l'utilise. Sinon si un fichier
@@ -76,7 +77,7 @@ if ARGS.m is not None:
 # Chaînes que vous recevez, avec leurs identifiants et leurs URL :
 try:
     from perso_chaines_xmltv import CHAINE_RECUES, SITES_CHAINES
-except ImportError:   # S'il n'existe pas on se rabbat sur le fichier par défaut :
+except ImportError:   # S'il n'existe pas on se rabat sur le fichier par défaut :
     print("Fichier de chaînes par défaut")
     from defaut_chaines_xmltv import CHAINE_RECUES, SITES_CHAINES
 
@@ -90,9 +91,9 @@ if  ARGS.s[0] == 2:
     # ARBRE = ET.parse('xmltv.xml')
     print("La seconde source semble ne plus fonctionner.")
 else:   # Par défaut :
-    telecharger_xmltv('https://xmltv.ch/xmltv/', 'xmltv-tnt.zip')
+    telecharger_xmltv('https://xmltvfr.fr/xmltv/', 'xmltv_tnt.zip')
     # On crée l'arbre XML (ElementTree) :
-    ARBRE = ET.parse('xmltv-tnt.xml')
+    ARBRE = ET.parse('xmltv_tnt.xml')
 
 RACINE = ARBRE.getroot()
 

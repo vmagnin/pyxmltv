@@ -14,7 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# Vincent MAGNIN, 2016-2019
+# Vincent MAGNIN, 2016-2026
+# Dernière modification : 23-05-2026
 
 '''
 Fonction pour télécharger un fichier XMLTV
@@ -24,7 +25,7 @@ import zipfile
 import os
 import re
 import pickle
-from urllib.request import urlretrieve, urlopen, URLError
+from urllib.request import urlretrieve, urlopen, URLError, Request
 
 
 def telecharger_xmltv(url, nom_fichier):
@@ -39,9 +40,15 @@ def telecharger_xmltv(url, nom_fichier):
     except OSError:
         ANCIEN_ETag = "0"
 
+    # Nécessaire avec les sites refusant les requêtes par Python :
+    requete = Request(
+        url=url + nom_fichier,
+        headers={'User-Agent': 'Mozilla/5.0'}
+    )
+
     # On récupère l'ETag HTTP du zip sur le serveur :
     try:
-        entete = urlopen(url+nom_fichier).info()
+        entete = urlopen(requete).info()
         match = re.search(r'ETag: "(\w+-\w+-\w+)"', str(entete))
         ETag = match.group(1)
     except URLError:
@@ -51,17 +58,18 @@ def telecharger_xmltv(url, nom_fichier):
         ETag = "00"
         # On essaie d'utiliser à la place le champ Last-Modified
         try:
-            entete = urlopen(url+nom_fichier).info()
+            entete = urlopen(requete).info()
             match = re.search(r'Last-Modified: (.*)', str(entete))
             ETag = match.group(1)
         except AttributeError:
             ANCIEN_ETag = "0"    # On force le téléchargement du zip
 
-    # On retélécharge le zip s'il a été modifié sur le serveur:
+    # On re-télécharge le zip s'il a été modifié sur le serveur:
     if ETag != ANCIEN_ETag:
         print("Chargement de la dernière version en ligne...")
         try:
-            urlretrieve(url+nom_fichier, nom_fichier)
+            with urlopen(requete) as reponse, open(nom_fichier, 'wb') as f:
+                f.write(reponse.read())
             with zipfile.ZipFile(nom_fichier, 'r') as zfile:
                 zfile.extractall()
                 # On sauvegarde l'ETag du fichier zip :
