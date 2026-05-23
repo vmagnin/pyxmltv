@@ -1,4 +1,4 @@
-# pyxmltv v1.7.1
+# pyxmltv v1.7.2
 
 Script Python 3 sous licence GNU GPL v3 permettant de surveiller des fichiers au
 format XMLTV contenant les programmes de la TNT française pour les prochains
